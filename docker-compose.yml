@@ -1,0 +1,17 @@
+version: '3'
+services:
+  bridge:
+    build: .
+    depends_on:
+      - ipfs
+    environment:
+      IPFS_NODE: 'http://ipfs:5001'
+    volumes:
+      - ./data/mnft-metadata:/app/data/mnft-metadata
+  ipfs:
+    image: ipfs/go-ipfs:v0.10.0
+    ports:
+      - '4001:4001'
+      - '5001:5001'
+    volumes:
+      - ./data/ipfs:/data/ipfs

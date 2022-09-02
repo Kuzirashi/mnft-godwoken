@@ -5,15 +5,15 @@ dotenv.config();
 
 const EVM_PRIVATE_KEY = process.env.EVM_PRIVATE_KEY;
 
-if (!process.env.CKB_INDEXER_RPC_URL || !process.env.CKB_NODE_RPC_URL || !EVM_PRIVATE_KEY) {
-    throw new Error(`Environment variables "CKB_INDEXER_RPC_URL", "CKB_NODE_RPC_URL", "EVM_PRIVATE_KEY" are mandatory.`);
+if (!process.env.CKB_INDEXER_RPC_URL || !process.env.CKB_NODE_RPC_URL || !EVM_PRIVATE_KEY || !process.env.IPFS_NODE || !process.env.MNFT_METADATA_LOCATION) {
+    throw new Error(`Environment variables "CKB_INDEXER_RPC_URL", "CKB_NODE_RPC_URL", "EVM_PRIVATE_KEY", "IPFS_NODE", "MNFT_METADATA_LOCATION" are mandatory.`);
 }
 
 export const CONFIG = {
     CKB_INDEXER_RPC_URL: process.env.CKB_INDEXER_RPC_URL,
     CKB_NODE_RPC_URL: process.env.CKB_NODE_RPC_URL,
 
-    IPFS_NODE: "http://localhost:5001",
+    IPFS_NODE: process.env.IPFS_NODE,
     IPFS_EXISTING_FILE_CHECK_TIMEOUT: 10000,
     
     MNFT_ISSUER_TYPE_CODE_HASH: "0xb59879b6ea6fff985223117fa499ce84f8cfb028c4ffdfdf5d3ec19e905a11ed",
@@ -31,7 +31,7 @@ export const CONFIG = {
     },
     EVM_PRIVATE_KEY,
 
-    DATA_LOCATION: '../data',
+    MNFT_METADATA_LOCATION: process.env.MNFT_METADATA_LOCATION,
 
     PENDING_LAYER_1_MNFTS_CHECK_FREQUENCY: 300000,
 

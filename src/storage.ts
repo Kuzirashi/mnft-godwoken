@@ -39,7 +39,7 @@ export class MetadataStorage {
     }
 
     getDataPath() {
-        return path.join(__dirname, CONFIG.DATA_LOCATION);
+        return path.join(__dirname, CONFIG.MNFT_METADATA_LOCATION);
     }
 
     async checkAndCreateDataDirectory() {
@@ -58,7 +58,7 @@ export class MetadataStorage {
         });
 
         const fileName = `${cid}.json`;
-        const filePath = path.join(__dirname, `../data/${fileName}`);
+        const filePath = path.join(this.getDataPath(), fileName);
         let existingFileLocally: Buffer | null = null;
 
         try {
