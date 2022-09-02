@@ -2,6 +2,7 @@ version: '3'
 services:
   bridge:
     build: .
+    restart: always
     depends_on:
       - ipfs
     environment:
