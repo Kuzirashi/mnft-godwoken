@@ -1,15 +1,23 @@
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
-import { CONFIG } from './config';
 import { access, mkdir, readFile, writeFile } from 'fs/promises';
 import path from 'path';
+import pinataSDK, { PinataClient } from '@pinata/sdk';
+
+import { CONFIG } from './config';
+import { logger } from "./logger";
 
 export class MetadataStorage {
     public initialized = false;
 
-    private client: IPFSHTTPClient;
+    private ipfsClient: IPFSHTTPClient;
+    private pinataClient?: PinataClient;
 
     constructor() {
-        this.client = create({ url: CONFIG.IPFS_NODE });
+        this.ipfsClient = create({ url: CONFIG.IPFS_NODE });
+
+        if (CONFIG.PINATA_API_KEY && CONFIG.PINATA_SECRET_API_KEY) {
+            this.pinataClient = pinataSDK(CONFIG.PINATA_API_KEY, CONFIG.PINATA_SECRET_API_KEY);
+        }
     }
 
     async initialize() {
@@ -18,6 +26,15 @@ export class MetadataStorage {
         }
         
         await this.checkAndCreateDataDirectory();
+
+        if (this.pinataClient) {
+            const result = await this.pinataClient.testAuthentication();
+
+            if (!result.authenticated) {
+                throw new Error(`Can't authenticate with Pinata service.`);
+            }
+        }
+
         this.initialized = true;
     }
 
@@ -35,12 +52,13 @@ export class MetadataStorage {
     }
 
     async storeFile(content: string) {
-        const { cid } = await this.client.add(content, {
+        const { cid } = await this.ipfsClient.add(content, {
             onlyHash: true,
             cidVersion: 1
         });
 
-        const filePath = path.join(__dirname, `../data/${cid}.json`);
+        const fileName = `${cid}.json`;
+        const filePath = path.join(__dirname, `../data/${fileName}`);
         let existingFileLocally: Buffer | null = null;
 
         try {
@@ -53,8 +71,8 @@ export class MetadataStorage {
 
         let fileExistsInIPFS = false;
         try {
-            const existingFileInIPFS = await this.client.cat(cid, {
-                timeout: 10000
+            const existingFileInIPFS = await this.ipfsClient.cat(cid, {
+                timeout: CONFIG.IPFS_EXISTING_FILE_CHECK_TIMEOUT
             });
 
             const resultsFromIPFS = [];
@@ -63,15 +81,22 @@ export class MetadataStorage {
             }
 
             fileExistsInIPFS = true;
-        } catch (error) {
-            // console.log(`File ${cid}.json doesn't exist in IPFS.`);
-        }
+        } catch (error) {}
 
         if (!fileExistsInIPFS) {
-            await this.client.add(content, {
+            await this.ipfsClient.add(content, {
                 cidVersion: 1
             });
-            console.log(`Uploaded ${cid}.json to IPFS.`);
+            logger.info(`Uploaded ${fileName} to IPFS.`);
+        }
+
+        if (this.pinataClient) {
+            await this.pinataClient.pinByHash(cid.toString(), {
+                pinataMetadata: {
+                    name: fileName
+                }
+            });
+            logger.info(`Requested to pin ${fileName} in Pinata.`);
         }
 
         return cid;

@@ -5,14 +5,16 @@ dotenv.config();
 
 const EVM_PRIVATE_KEY = process.env.EVM_PRIVATE_KEY;
 
-if (!EVM_PRIVATE_KEY) {
-    throw new Error('You need to pass EVM_PRIVATE_KEY environment variable.');
+if (!process.env.CKB_INDEXER_RPC_URL || !process.env.CKB_NODE_RPC_URL || !EVM_PRIVATE_KEY) {
+    throw new Error(`Environment variables "CKB_INDEXER_RPC_URL", "CKB_NODE_RPC_URL", "EVM_PRIVATE_KEY" are mandatory.`);
 }
 
 export const CONFIG = {
-    CKB_NODE_RPC_URL: "https://testnet.ckb.dev/rpc",
-    CKB_INDEXER_RPC_URL: "https://testnet.ckb.dev/indexer",
+    CKB_INDEXER_RPC_URL: process.env.CKB_INDEXER_RPC_URL,
+    CKB_NODE_RPC_URL: process.env.CKB_NODE_RPC_URL,
+
     IPFS_NODE: "http://localhost:5001",
+    IPFS_EXISTING_FILE_CHECK_TIMEOUT: 10000,
     
     MNFT_ISSUER_TYPE_CODE_HASH: "0xb59879b6ea6fff985223117fa499ce84f8cfb028c4ffdfdf5d3ec19e905a11ed",
     MNFT_CLASS_TYPE_CODE_HASH: "0x095b8c0b4e51a45f953acd1fcd1e39489f2675b4bc94e7af27bb38958790e3fc",
@@ -29,5 +31,10 @@ export const CONFIG = {
     },
     EVM_PRIVATE_KEY,
 
-    DATA_LOCATION: '../data',    
+    DATA_LOCATION: '../data',
+
+    PENDING_LAYER_1_MNFTS_CHECK_FREQUENCY: 300000,
+
+    PINATA_API_KEY: process.env.PINATA_API_KEY,
+    PINATA_SECRET_API_KEY: process.env.PINATA_SECRET_API_KEY
 }

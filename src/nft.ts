@@ -302,18 +302,11 @@ export class NFT {
       const scriptHashBeginning = scriptHash.slice(0, 42);
 
       if (scriptHashBeginning === typeArgs.issuerId) {
-        // console.log(currentIssuerCell);
         issuerCell = currentIssuerCell as CkbIndexerCell;
         ISSUER_CELLS_MAP.set(typeArgs.issuerId, issuerCell);
         break;
       }
     }
-
-    // console.log({
-    //   requestBody: JSON.stringify(requestBody),
-    //   result: JSON.stringify(result),
-    //   resultLength: result.result.objects.length,
-    //  })
 
     this.issuerCell = issuerCell;
 

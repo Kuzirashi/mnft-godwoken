@@ -41,7 +41,7 @@ export class Bridge {
           await this.bridgeNFT(nft);
         }
 
-        await new Promise(r => setTimeout(r, 300000));
+        await new Promise(r => setTimeout(r, CONFIG.PENDING_LAYER_1_MNFTS_CHECK_FREQUENCY));
       }
     }
 
