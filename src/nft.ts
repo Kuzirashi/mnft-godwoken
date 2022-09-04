@@ -13,7 +13,7 @@ import { BytesCodec } from "@ckb-lumos/codec/lib/base";
 import { concat } from "@ckb-lumos/codec/lib/bytes";
 import { assertMinBufferLength, assertBufferLength } from "@ckb-lumos/codec/lib/utils";
 import { Address, AddressPrefix, HashType, NervosAddressVersion, Script } from "@lay2/pw-core";
-import { logger } from "ethers";
+import { logger } from "./logger";
 
 const { struct } = molecule;
 const { Uint8, Uint16BE, Uint32BE } = number;
@@ -355,7 +355,7 @@ export class NFT {
     if (transaction.outputs.length < 2) {
       logger.debug(`Can't get Receiving Ethereum Address. Transaction with mNFT transfer has less than 2 outputs.`);
       return null;
-    }    
+    }
 
     for (const transactionInput of transaction.inputs) {
       const previousOutputTransaction = await this.getCommittedTransaction(transactionInput.previous_output.tx_hash);
@@ -368,12 +368,11 @@ export class NFT {
       if (previousOutput.type?.code_hash === CONFIG.MNFT_TYPE_CODE_HASH && previousOutput.type.args === this.typeScriptArguments) {
         logger.debug('Found mNFT transfer previous output.');
 
-        if (previousOutput.lock.code_hash === CONFIG.UNIPASS_V2_CODE_HASH) {
-          logger.debug('Detected Unipass V2 lock. Searching for Receiving Ethereum Address Cell...');
+        if ([CONFIG.UNIPASS_V2_CODE_HASH, CONFIG.PORTAL_WALLET_CODE_HASH].includes(previousOutput.lock.code_hash)) {
+          logger.debug('Detected Unipass V2 or Portal Wallet sender lock. Searching for Receiving Ethereum Address Cell...');
 
           for (const [index, output] of transaction.outputs.entries()) {
             const outputData = transaction.outputs_data[index];
-
             
             if (!output.type && outputData?.length === EXPECTED_ADDRESS_CELL_DATA_LENGTH && outputData.slice(0, MNFT_TYPE_ARGS_LENGTH + 2) === this.typeScriptArguments) {
               return `0x${outputData.slice(MNFT_TYPE_ARGS_LENGTH + 2, EXPECTED_ADDRESS_CELL_DATA_LENGTH)}`;
