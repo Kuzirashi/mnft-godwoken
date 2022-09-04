@@ -22,8 +22,7 @@ export const CONFIG = {
 
     UNIPASS_V2_CODE_HASH: "0x124a60cd799e1fbca664196de46b3f7f0ecb7138133dcaea4893c51df5b02be6",
 
-    // LAYER_ONE_BRIDGE_ETH_ADDRESS: '0xD173313A51f8fc37BcF67569b463abd89d81844f'
-    LAYER_ONE_BRIDGE_ETH_ADDRESS: '0x72a55a5b52510c3ce74bb71a90ddfdf64bcc1634', // ckt1qpvvtay34wndv9nckl8hah6fzzcltcqwcrx79apwp2a5lkd07fdxxqtj54d9k5j3ps7wwjahr2gdml0kf0xpvdqw8see6 | ckt1q3vvtay34wndv9nckl8hah6fzzcltcqwcrx79apwp2a5lkd07fdxxu49tfd4y5gv8nn5hdc6jrwlmajtestrga6akjw
+    LAYER_ONE_BRIDGE_ETH_ADDRESS: '0x350595e9e62cba0d725c7cca7047dd2993f5cec6',
 
     EVM_RPC: 'https://godwoken-testnet-v1.ckbapp.dev',
     EVM_CONTRACTS: {
