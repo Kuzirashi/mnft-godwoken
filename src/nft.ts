@@ -369,7 +369,7 @@ export class NFT {
         logger.debug('Found mNFT transfer previous output.');
 
         if ([CONFIG.UNIPASS_V2_CODE_HASH, CONFIG.UNIPASS_V3_CODE_HASH, CONFIG.PORTAL_WALLET_CODE_HASH].includes(previousOutput.lock.code_hash)) {
-          logger.debug('Detected Unipass V2 or Portal Wallet sender lock. Searching for Receiving Ethereum Address Cell...');
+          logger.debug('Detected Unipass V2, Unipass V3 or Portal Wallet sender lock. Searching for Receiving Ethereum Address Cell...');
 
           for (const [index, output] of transaction.outputs.entries()) {
             const outputData = transaction.outputs_data[index];
