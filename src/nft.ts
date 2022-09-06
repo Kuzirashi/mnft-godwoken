@@ -368,7 +368,7 @@ export class NFT {
       if (previousOutput.type?.code_hash === CONFIG.MNFT_TYPE_CODE_HASH && previousOutput.type.args === this.typeScriptArguments) {
         logger.debug('Found mNFT transfer previous output.');
 
-        if ([CONFIG.UNIPASS_V2_CODE_HASH, CONFIG.PORTAL_WALLET_CODE_HASH].includes(previousOutput.lock.code_hash)) {
+        if ([CONFIG.UNIPASS_V2_CODE_HASH, CONFIG.UNIPASS_V3_CODE_HASH, CONFIG.PORTAL_WALLET_CODE_HASH].includes(previousOutput.lock.code_hash)) {
           logger.debug('Detected Unipass V2 or Portal Wallet sender lock. Searching for Receiving Ethereum Address Cell...');
 
           for (const [index, output] of transaction.outputs.entries()) {
